@@ -10,7 +10,28 @@ const getEvents = async (req, res = response) => {
   });
 };
 
+const createEvent = async (req, res = response) => {
+  const event = new Event(req.body);
+
+  try {
+    event.user = req.uid;
+
+    const savedEvent = await event.save();
+
+    res.json({
+      ok: true,
+      event: savedEvent
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      ok: false,
+      msg: 'Server error'
+    });
+  }
+};
 
 module.exports = {
-  getEvents
+  getEvents,
+  createEvent,
 };
