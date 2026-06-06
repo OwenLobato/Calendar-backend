@@ -74,7 +74,7 @@ const deleteEvent = async (req, res = response) => {
   const eventId = req.params.id;
 
   try {
-    const event = await Event.findByIdAndDelete(eventId);
+    const event = await Event.findById(eventId);
     if (!event) {
       return res.status(404).json({
         ok: false,
@@ -88,6 +88,8 @@ const deleteEvent = async (req, res = response) => {
         msg: 'Unauthorized'
       });
     }
+
+    await Event.findByIdAndDelete(eventId);
 
     res.json({
       ok: true,
