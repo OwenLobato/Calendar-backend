@@ -1,14 +1,15 @@
 # Calendar Backend
 
-REST API for a calendar application. Handles user authentication with JWT and full CRUD for calendar events, backed by MongoDB.
+REST API for a React calendar application. Handles user authentication with JWT, full CRUD for calendar events backed by MongoDB, and serves the React frontend as a static SPA.
 
 ## Tech Stack
 
-- **Runtime:** Node.js
+- **Runtime:** Node.js 22
 - **Framework:** Express 5
 - **Database:** MongoDB + Mongoose
 - **Auth:** JWT (jsonwebtoken) + bcryptjs
 - **Validation:** express-validator
+- **Dates:** moment
 - **Dev:** nodemon
 
 ## Project Structure
@@ -20,7 +21,7 @@ calendar-backend/
 ├── helpers/            # JWT generator, date validator
 ├── middlewares/        # JWT validator, field validator
 ├── models/             # Mongoose schemas (User, Event)
-├── public/             # Static fallback page
+├── public/             # React frontend SPA (built dist)
 ├── routes/             # Express routers (auth, events)
 ├── .env.example        # Environment variables template
 └── index.js            # Entry point
@@ -30,7 +31,7 @@ calendar-backend/
 
 ### Prerequisites
 
-- Node.js >= 20
+- Node.js 22.x
 - MongoDB instance (local or Atlas)
 
 ### Installation
@@ -63,22 +64,22 @@ npm run dev
 
 ### Auth — `/api/auth`
 
-| Method | Endpoint          | Description          | Auth required | Body                              |
-|--------|-------------------|----------------------|---------------|-----------------------------------|
-| POST   | `/api/auth/new`   | Register a new user  | No            | `name`, `email`, `password`       |
-| POST   | `/api/auth/`      | Login                | No            | `email`, `password`               |
-| GET    | `/api/auth/revalidate` | Revalidate token | Yes (`x-token`) | —                            |
+| Method | Endpoint               | Description         | Auth required   | Body                        |
+|--------|------------------------|---------------------|-----------------|-----------------------------|
+| POST   | `/api/auth/new`        | Register a new user | No              | `name`, `email`, `password` |
+| POST   | `/api/auth/`           | Login               | No              | `email`, `password`         |
+| GET    | `/api/auth/revalidate` | Revalidate token    | Yes (`x-token`) | —                           |
 
 ### Events — `/api/events`
 
 All event endpoints require a valid JWT in the `x-token` header.
 
-| Method | Endpoint           | Description        | Body                                     |
-|--------|--------------------|--------------------|------------------------------------------|
-| GET    | `/api/events`      | Get all events     | —                                        |
-| POST   | `/api/events`      | Create a new event | `title`, `start`, `end`, `notes` (opt.)  |
-| PUT    | `/api/events/:id`  | Update an event    | Any event fields                         |
-| DELETE | `/api/events/:id`  | Delete an event    | —                                        |
+| Method | Endpoint          | Description        | Body                                    |
+|--------|-------------------|--------------------|-----------------------------------------|
+| GET    | `/api/events`     | Get all events     | —                                       |
+| POST   | `/api/events`     | Create a new event | `title`, `start`, `end`, `notes` (opt.) |
+| PUT    | `/api/events/:id` | Update an event    | Any event fields                        |
+| DELETE | `/api/events/:id` | Delete an event    | —                                       |
 
 ### Response format
 
@@ -92,9 +93,23 @@ All endpoints return JSON with at least an `ok` boolean:
 { "ok": false, "msg": "Error description" }
 ```
 
+## Serving the Frontend
+
+The backend serves the React frontend from the `public/` folder. To update the frontend build:
+
+```bash
+# In the React project
+npm run build
+
+# Copy the dist/ output into the backend
+cp -r dist/* ../calendar-backend/public/
+```
+
+Any route not matched by the API is redirected to `index.html`, so React Router handles client-side navigation.
+
 ## Scripts
 
-| Command       | Description                        |
-|---------------|------------------------------------|
-| `npm start`   | Start server with Node             |
-| `npm run dev` | Start server with nodemon (watch)  |
+| Command       | Description                       |
+|---------------|-----------------------------------|
+| `npm start`   | Start server with Node            |
+| `npm run dev` | Start server with nodemon (watch) |
