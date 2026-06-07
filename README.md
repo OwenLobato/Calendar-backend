@@ -113,3 +113,7 @@ Any route not matched by the API is redirected to `index.html`, so React Router 
 |---------------|-----------------------------------|
 | `npm start`   | Start server with Node            |
 | `npm run dev` | Start server with nodemon (watch) |
+
+## Credits
+
+Built as part of the **[React: De cero a experto](https://www.udemy.com/course/react-cero-experto)** course by [Fernando Herrera](https://github.com/Klerith) — [DevTalles](https://devtalles.com).
